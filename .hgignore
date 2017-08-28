@@ -1,0 +1,5 @@
+syntax: glob
+maxEnt
+*test*
+*armadillo*
+*.o

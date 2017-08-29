@@ -1,6 +1,5 @@
 # source files, objects, headers and libraries
-SOURCES      = src/maxEnt_data.cpp src/utilities.cpp src/maxEnt_main.cpp src/maxEnt_methods.cpp src/maxEnt_methodsPreprocessing.cpp
-
+SOURCES      = src/main.cpp   src/loop_run.cpp  src/utilities.cpp  src/maxEnt_data.cpp  src/maxEnt_methods.cpp  src/minimize.cpp  src/preproc.cpp
 
 OBJECTS      = $(SOURCES:.cpp=.o)
 

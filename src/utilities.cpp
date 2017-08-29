@@ -1,42 +1,10 @@
 /*
  file utilities.cpp
  functions definitions for class "utilities" defined in file utilities.h
- 
- Copyright (C) 2015 Dominic Bergeron (dominic.bergeron@usherbrooke.ca)
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "includeDef.h"
+//#include "includeDef.h"
 #include "utilities.h"
-
-extern "C"
-{
-	// routines LAPACK  (descriptions sur http://www.netlib.org/lapack )
-	// resout le systeme d'equations AX=B ou A est tridiagonal, reels double precision 	
-	void dgtsv_(int *N, int *NRHS, double *DL, double *D, double *DU, double *B, int *LDB, int *INFO );
-	// resout le systeme d'equations AX=B ou A est tridiagonal, complex double precision 	
-	void zgtsv_(int *N, int *NRHS, dcomplex *DL, dcomplex *D, dcomplex *DU, dcomplex *B, int *LDB, int *INFO );
-	// resout le systeme d'equations AX=B ou A a plusieurs diagonales, reals double precision
-	void dgbsv_(int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, int *IPIV, double *B, int *LDB, int *INFO );
-	// routine avancee pour resoudre le systeme d'equations AX=B ou A a plusieurs diagonales, reals double precision
-	void dgbsvx_( char *FACT, char *TRANS, int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, double *AFB,
-				 int *LDAFB, int *IPIV, char *EQUED, double *R, double *C, double *B, int *LDB, double *X, int *LDX,
-				 double *RCOND, double *FERR, double *BERR, double *WORK, int *IWORK, int *INFO );
-	// resout le systeme d'equations AX=B ou A a plusieurs diagonales, complex double precision
-	void zgbsv_(int *N, int *KL, int *KU, int *NRHS, dcomplex *AB, int *LDAB, int *IPIV, dcomplex *B, int *LDB, int *INFO );
-}
 
 bool utilities::copy_file(const string fname, const string in_dir, const string out_dir)
 {

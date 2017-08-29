@@ -1,9 +1,9 @@
 
 
-#ifndef OMEGAMAXENT_DATA_H
-#define OMEGAMAXENT_DATA_H
+#pragma once
 
-#include "includeDef.h"
+
+//#include "includeDef.h"
 #include <string>
 #include <list>
 #include <vector>
@@ -21,26 +21,6 @@
 #include <cmath>
 
 using namespace arma;
-
-
-extern "C"
-{
-	//computes the solution to system of linear equations A * X = B ( http://www.netlib.org/lapack/explore-html/d8/d72/dgesv_8f_source.html )
-    void dgesv_(int *N, int *NRHS, double *A, int *LDA, int *IPIV, double *B, int *LDB, int *INFO );
-	// computes the solution to a real system of linear equations A * X = B, where A is an N-by-N symmetric positive definite matrix and X and B are N-by-NRHS matrices. ( http://www.netlib.org/lapack/explore-html/d9/d6f/dposv_8f_source.html )
-	void dposv_(char *UPLO, int *N, int *NRHS, double *A, int *LDA, double *B, int *LDB, int *INFO );
-	//computes the singular value decomposition ( http://www.netlib.org/lapack/explore-html/d8/d2d/dgesvd_8f_source.html )
-    void dgesvd_(char *JOBU, char *JOBVT, int *M, int *N, double *A, int *LDA, double *S, double *U, int *LDU, double *VT, int *LDVT, double *WORK, int *LWORK, int *INFO );
-	//computes the singular value decomposition. If singular vectors are desired, uses a divide and conquer algorithm. ( http://www.netlib.org/lapack/explore-html/db/db4/dgesdd_8f_source.html )
-    void dgesdd_( char *JOBZ, int *M, int *N, double *A, int *LDA, double *S, double *U, int *LDU, double *VT, int *LDVT, double *WORK, int *LWORK, int *IWORK, int *INFO );
-	//computes the eigenvalues and, optionally, the left and/or right eigenvectors for SY matrices ( http://www.netlib.org/lapack/explore-html/dd/d4c/dsyev_8f_source.html )
-	void dsyev_( char *JOBZ, char *UPLO, int *N, double *A, int *LDA, double *W, double *WORK, int *LWORK, int *INFO );
-	//solves a general Gauss-Markov linear model (GLM) problem. ( http://www.netlib.org/lapack/explore-html/d3/df4/dggglm_8f_source.html )
-	void dggglm_(int *N, int *M, int *P, double *A, int *LDA, double *B, int *LDB, double *D, double *X, double *Y, double *WORK, int *LWORK, int *INFO );
-	//computes the solution to system of linear equations A * X = B, where A is a band matrix ( http://www.netlib.org/lapack/explore-html/dd/dc2/dgbsv_8f_source.html )
-	void dgbsv_(int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, int *IPIV, double *B, int *LDB, int *INFO );
-}
-
 
 //MAIN INPUT FILE PARAMETERS
 
@@ -298,4 +278,3 @@ extern "C++"
     
 }
 
-#endif

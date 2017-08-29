@@ -1,30 +1,85 @@
 /*
  file utilities.h
  deinition of class "utilities" containing multipurpose numerical routines. The best way to use it is to derive a class from it.
- 
- Copyright (C) 2015 Dominic Bergeron (dominic.bergeron@usherbrooke.ca)
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#pragma once
 
-#ifndef utilities_H
-#define utilities_H
 
-#include "includeDef.h"
+//start of includeDef.h
+#ifdef USE_MPI
+#include "fftw3-mpi.h"
+#include "mpi.h"
+#endif
+
+//#include "fftw3.h"
+#include <cmath>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <cstdio>
+#include <complex>
+#include <string>
+#include <cstring>
+#include <ctime>
+#include <limits>
+#include <stdio.h>
+#include <sys/stat.h>
+
+#ifndef PI
+#define PI acos((double)-1.0)
+#endif
+
+#define EPSILON numeric_limits<double>::epsilon()
+#define DBL_MIN numeric_limits<double>::min()
+#define DBL_MAX numeric_limits<double>::max()
+#define INF numeric_limits<double>::infinity()
+
+using namespace std;
+
+typedef complex<double> dcomplex;
+typedef unsigned int  uint;
+//end of includeDef.h
+
+
+
 #include "armadillo"
 
 using namespace arma;
+
+
+extern "C"
+{
+	// routines LAPACK  (descriptions sur http://www.netlib.org/lapack )
+	// resout le systeme d'equations AX=B ou A est tridiagonal, reels double precision 	
+	void dgtsv_(int *N, int *NRHS, double *DL, double *D, double *DU, double *B, int *LDB, int *INFO );
+	// resout le systeme d'equations AX=B ou A est tridiagonal, complex double precision 	
+	void zgtsv_(int *N, int *NRHS, dcomplex *DL, dcomplex *D, dcomplex *DU, dcomplex *B, int *LDB, int *INFO );
+	// resout le systeme d'equations AX=B ou A a plusieurs diagonales, reals double precision
+	void dgbsv_(int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, int *IPIV, double *B, int *LDB, int *INFO );
+	// routine avancee pour resoudre le systeme d'equations AX=B ou A a plusieurs diagonales, reals double precision
+	void dgbsvx_( char *FACT, char *TRANS, int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, double *AFB,
+				 int *LDAFB, int *IPIV, char *EQUED, double *R, double *C, double *B, int *LDB, double *X, int *LDX,
+				 double *RCOND, double *FERR, double *BERR, double *WORK, int *IWORK, int *INFO );
+	// resout le systeme d'equations AX=B ou A a plusieurs diagonales, complex double precision
+	void zgbsv_(int *N, int *KL, int *KU, int *NRHS, dcomplex *AB, int *LDAB, int *IPIV, dcomplex *B, int *LDB, int *INFO );
+
+	//computes the solution to system of linear equations A * X = B ( http://www.netlib.org/lapack/explore-html/d8/d72/dgesv_8f_source.html )
+	void dgesv_(int *N, int *NRHS, double *A, int *LDA, int *IPIV, double *B, int *LDB, int *INFO );
+	// computes the solution to a real system of linear equations A * X = B, where A is an N-by-N symmetric positive definite matrix and X and B are N-by-NRHS matrices. ( http://www.netlib.org/lapack/explore-html/d9/d6f/dposv_8f_source.html )
+	void dposv_(char *UPLO, int *N, int *NRHS, double *A, int *LDA, double *B, int *LDB, int *INFO );
+	//computes the singular value decomposition ( http://www.netlib.org/lapack/explore-html/d8/d2d/dgesvd_8f_source.html )
+	void dgesvd_(char *JOBU, char *JOBVT, int *M, int *N, double *A, int *LDA, double *S, double *U, int *LDU, double *VT, int *LDVT, double *WORK, int *LWORK, int *INFO );
+	//computes the singular value decomposition. If singular vectors are desired, uses a divide and conquer algorithm. ( http://www.netlib.org/lapack/explore-html/db/db4/dgesdd_8f_source.html )
+	void dgesdd_( char *JOBZ, int *M, int *N, double *A, int *LDA, double *S, double *U, int *LDU, double *VT, int *LDVT, double *WORK, int *LWORK, int *IWORK, int *INFO );
+	//computes the eigenvalues and, optionally, the left and/or right eigenvectors for SY matrices ( http://www.netlib.org/lapack/explore-html/dd/d4c/dsyev_8f_source.html )
+	void dsyev_( char *JOBZ, char *UPLO, int *N, double *A, int *LDA, double *W, double *WORK, int *LWORK, int *INFO );
+	//solves a general Gauss-Markov linear model (GLM) problem. ( http://www.netlib.org/lapack/explore-html/d3/df4/dggglm_8f_source.html )
+	void dggglm_(int *N, int *M, int *P, double *A, int *LDA, double *B, int *LDB, double *D, double *X, double *Y, double *WORK, int *LWORK, int *INFO );
+	//computes the solution to system of linear equations A * X = B, where A is a band matrix ( http://www.netlib.org/lapack/explore-html/dd/dc2/dgbsv_8f_source.html )
+	void dgbsv_(int *N, int *KL, int *KU, int *NRHS, double *AB, int *LDAB, int *IPIV, double *B, int *LDB, int *INFO );
+}
+
+
 
 extern "C++" {
 	
@@ -154,6 +209,5 @@ class utilities
 	
 } /* extern "C++" */
 
-#endif /* !defined utilities_H */			
 
 			

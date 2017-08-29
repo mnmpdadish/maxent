@@ -3,3 +3,5 @@ maxEnt
 *test*
 *armadillo*
 *.o
+*.swp
+

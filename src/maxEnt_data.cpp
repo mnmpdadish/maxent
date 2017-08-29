@@ -1,12 +1,5 @@
 #include "maxEnt_data.h"
 
-bool polyfit(vec x, vec y, int D, double x0, vec &cfs);
-bool polyval(double x0, vec cfs, vec x, vec &y);
-void remove_spaces_front(string &str);
-void remove_spaces_back(string &str);
-void remove_spaces_ends(string &str);
-void pascal(int n, imat &P);
-
 OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 {
     //input_params_file_name.assign("para.dat");
@@ -32,8 +25,8 @@ OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 
 
 	col_Gr=2;
-	col_errGr=2;
 	col_Gi=3;
+	col_errGr=2;
 	col_errGi=3;
 	col_Gtau=2;
 	col_errGtau=3;
@@ -47,8 +40,6 @@ OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 	default_model_shape=2.0;
 	
 
-
-	
 	//additional stuff
 	Nalpha_max=500;
 					

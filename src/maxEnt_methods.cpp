@@ -1,13 +1,6 @@
 
 #include "maxEnt_data.h"
 
-bool polyfit(vec x, vec y, int D, double x0, vec &cfs);
-bool polyval(double x0, vec cfs, vec x, vec &y);
-void remove_spaces_front(string &str);
-void remove_spaces_back(string &str);
-void remove_spaces_ends(string &str);
-void pascal(int n, imat &P);
-
 bool OmegaMaxEnt_data::preproc()
 {
 	initialize_maxent=true;

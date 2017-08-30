@@ -185,6 +185,10 @@ void OmegaMaxEnt_data::loop_run()
 		vectors_A.resize(Nalpha_new);
 		vectors_w.resize(Nalpha_new);
 	}
+	
+	handle_gnuplot = gpc_init_image();
+	//printf("handle: %d\n", handle_gnuplot);
+    
 	minimize();
 //				pow_alpha_step=pow_alpha_step_min;
 //				minimize_increase_alpha();
@@ -336,7 +340,7 @@ void OmegaMaxEnt_data::loop_run()
 		int ind_alpha_opt, ind_alpha_opt_l, ind_alpha_opt_r;
 		
 		double max_curv;
-		if (ind_min_curv<Ncurv && ind_max_curv<Ncurv)
+		if (ind_min_curv<Ncurv && ind_max_curv<Ncurv) // find ind_alpha_opt
 		{
 			uword ind_alpha_opt_tmp;
 			vec curv=curv_lchi2_lalpha.rows(ind_min_curv,ind_max_curv);
@@ -490,9 +494,8 @@ void OmegaMaxEnt_data::loop_run()
 			cout<<"new value of alpha_min: "<<alpha_min<<endl;
 		}
 	}
-	
+
 	return;
-	
 }
 
 

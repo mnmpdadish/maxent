@@ -1,5 +1,5 @@
 # source files, objects, headers and libraries
-SOURCES      = src/main.cpp   src/loop_run.cpp  src/utilities.cpp  src/maxEnt_data.cpp  src/maxEnt_methods.cpp  src/minimize.cpp  src/preproc.cpp
+SOURCES      = src/main.cpp   src/loop_run.cpp  src/utilities.cpp  src/maxEnt_data.cpp  src/maxEnt_methods.cpp  src/minimize.cpp  src/preproc.cpp src/gnuplot_pipe.cpp
 
 OBJECTS      = $(SOURCES:.cpp=.o)
 

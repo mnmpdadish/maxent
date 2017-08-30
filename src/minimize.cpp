@@ -154,12 +154,6 @@ void OmegaMaxEnt_data::minimize()
 			iter_dA++;
 		}
 
-/*
-		if (mean_int_dA(0)>mean_int_dA_prec || iter_dA==Niter_dA_max)
-		{
-			cout<<"alpha= "<<alpha<<"  iteration: "<<iter_dA<<"  integrated absolute variation in A: "<<mean_int_dA_prec<<endl;
-		}
-*/		
 		chi2prec=chi2(0);
 		DG=GM-KGM*A1;
 		chi2=DG.t()*DG;
@@ -198,9 +192,11 @@ void OmegaMaxEnt_data::minimize()
 			
 			G_out=K*A;
 			G_V_out=KG_V*A;
-			
+
+			int bosonOffset = 0;
 			if (!boson || col_Gi>0)
 			{
+         	bosonOffset=1;			
 				if (cov_diag)
 				{
 					uvec even_ind=linspace<uvec>(0,2*Nn-2,Nn);
@@ -210,8 +206,6 @@ void OmegaMaxEnt_data::minimize()
 				else
 				{
 					errRe=G_V-G_V_out;
-					//errRe=G_V.rows(0,Nn-1)-G_V_out.rows(0,Nn-1);
-					//errIm=G_V.rows(Nn,2*Nn-1)-G_V_out.rows(Nn,2*Nn-1);
 				}
 			}
 			else
@@ -233,75 +227,9 @@ void OmegaMaxEnt_data::minimize()
 			
 			vectors_A.push_back(A);
 			vectors_w.push_back(w);
-			
-			/*
-			if (save_spec_func)
-			{
-				
-				
-				M_save.zeros(Nw,2);
-				M_save.col(0)=w;
-				if (!boson || col_Gi>0)
-					M_save.submat(1,1,Nw-2,1)=A;
-				else
-					M_save.submat(0,1,Nw-2,1)=A;
-				sprintf(file_name,output_name_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				
-				if (!boson || col_Gi>0)
-				{
-					M_save.zeros(Nn,3);
-					uvec even_ind=linspace<uvec>(0,2*Nn-2,Nn);
-					M_save.col(0)=wn;
-					M_save.col(1)=G_out.rows(even_ind);
-					M_save.col(2)=G_out.rows(even_ind+1);
-				}
-				else
-				{
-					M_save.zeros(Nn,2);
-					M_save.col(0)=wn;
-					M_save.col(1)=G_out;
-				}
-				sprintf(file_name,output_G_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				if (!boson || col_Gi>0)
-				{
-					if (cov_diag)
-					{
-						M_save.zeros(Nn,3);
-						M_save.col(0)=wn;
-						M_save.col(1)=errRe;
-						M_save.col(2)=errIm;
-					}
-					else
-					{
-						M_save.zeros(2*Nn,2);
-						M_save.col(0)=eigv_ind;
-						M_save.col(1)=errRe;
-					}
-				}
-				else
-				{
-					M_save.zeros(Nn,2);
-					M_save.col(0)=eigv_ind;
-					M_save.col(1)=errRe;
-				}
-				sprintf(file_name,output_error_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				if (NM>0)
-				{
-					sprintf(file_name,output_moments_format.c_str(),tem,alpha);
-					M_save.zeros(NM,2);
-					M_save.col(0)=M;
-					M_save.col(1)=M_out;
-					//M_save.save(file_name,raw_ascii);
-				}
-				
-			}*/
-			
+
+			gpc_plot_image(handle_gnuplot, vectors_A, w, ind_alpha-1, bosonOffset);
+		   
 			pow_alpha=pow_alpha-pow_alpha_step;
 			alpha_prec=alpha;
 			alpha=pow(10,pow_alpha);

@@ -90,7 +90,8 @@ OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 	R_width_ASmin=0.05;
 	f_Smin=1.0;
 	diff_chi2_max=0.1;
-	tol_int_dA=1.0e-12;
+	//tol_int_dA=1.0e-12;
+	tol_int_dA=1.0e-5;
 	rc2H=1.0e12;
 	fc2=1.0e20;
 	pow_alpha_step_init=0.2;

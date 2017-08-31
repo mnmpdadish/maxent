@@ -49,7 +49,6 @@ void OmegaMaxEnt_data::minimize()
 	double xc, yc, x1, y1;
 	
 	c1=(log(rADchange)+1)*dwS;
-	//vec c2_0=-fc2*c1/(2*exp(-1)*default_model);
 	vec c2_alpha=2*PI*alpha_c2_max*ones<vec>(NwA);
 	
 	uword ind_max_dchi2_alpha;
@@ -67,6 +66,8 @@ void OmegaMaxEnt_data::minimize()
 		//if (ind_c2_sat.n_rows)
 		//	c2.rows(ind_c2_sat)=(2*PI*alpha_c2_max/alpha)*ones<vec>(ind_c2_sat.n_rows);
 		
+		
+		/*
 		grS=dwS % log(A1/default_model) + dwS;
 		ind_An=find(A1/default_model<rADchange);
 		if (ind_An.n_rows)
@@ -107,8 +108,13 @@ void OmegaMaxEnt_data::minimize()
 		}
 		
 		A1min=min(A1-Amin);
+		*/
 		
-		while ( (mean_int_dA(0)>tol_int_dA || A1min<0) && iter_dA<Niter_dA_max && (mean_int_dA(0)<mean_int_dA_prec || mean_int_dA(0)<mean_int_dA_prec2))
+		double tmp_mean_int_dA=1e9; //arbitrairy large number (to ensure one while iteration at least)
+		double tmp_mean_int_dA_prec=1e10; //arbitrairy large number (to ensure one while iteration at least)
+		
+		iter_dA=1;
+		while ( (tmp_mean_int_dA>tol_int_dA || A1min<0) && iter_dA<Niter_dA_max && (tmp_mean_int_dA<tmp_mean_int_dA_prec))
 		{
 			grS=dwS % log(A1/default_model) + dwS;
 			ind_An=find(A1/default_model<rADchange);
@@ -134,25 +140,29 @@ void OmegaMaxEnt_data::minimize()
 			VPdA=B2/D1;
 			dA1=P*(V*VPdA);
 			
-			mean_int_dA_prec2=mean_int_dA_prec;
-			mean_int_dA_prec=mean_int_dA(0);
-			mean_int_dA=abs(dA1.t())*dwS;
+			mean_int_dA=abs(dA1.t())*dwS;  // MC: this is the integral of the difference dA1
+			tmp_mean_int_dA_prec=tmp_mean_int_dA;
+			tmp_mean_int_dA=mean_int_dA(0);
 			
-			if (mean_int_dA(0)<mean_int_dA_prec)
-			{
-				A1=A1+dA1;
-				A1min=min(A1-Amin);
-			}
+			printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, mean_int_dA_prec);
+			
+			
+			//if (mean_int_dA(0)<mean_int_dA_prec) //no need for this test, do the correction either ways
+			//{
+		   A1=A1+dA1;
+			A1min=min(A1-Amin);
+			//dA1.t().print();
+			//}
 			
 			ind_Anul=find(A1==0);
 			if (ind_Anul.n_rows)
 			{
 				A1.rows(ind_Anul)=Amin.rows(ind_Anul);
-			//	A1.rows(ind_Anul)=arma::max(Amin.rows(ind_Anul),DBL_MIN);
 			}
 			
 			iter_dA++;
 		}
+		
 
 		chi2prec=chi2(0);
 		DG=GM-KGM*A1;
@@ -173,22 +183,13 @@ void OmegaMaxEnt_data::minimize()
 			A=A1;
 			alpha_vec(ind_alpha_vec)=alpha;
 			chi2_vec(ind_alpha_vec)=chi2(0);
-			S_vec(ind_alpha_vec)=S;
 			vec logA=log(A/default_model);
 			ind_An=find(A/default_model<rADchange);
 			if (ind_An.n_rows)
 			{
 				logA.rows(ind_An)=log(rADmin)*ones<vec>(ind_An.n_rows);
 			}
-			S_vec(ind_alpha_vec)=-sum(A % dwS % logA)/(2*PI);
-			Aw_samp.row(ind_alpha_vec)=trans(A(w_sample_ind));
-			
-			if (print_alpha)
-			{
-				Q=chi2(0)-alpha*S_vec(ind_alpha_vec);
-				sprintf(alpha_output,alpha_output_format,ind_alpha,alpha,Q,S_vec(ind_alpha_vec),chi2(0));
-				cout<<alpha_output;
-			}
+			//Aw_samp.row(ind_alpha_vec)=trans(A(w_sample_ind));
 			
 			G_out=K*A;
 			G_V_out=KG_V*A;
@@ -224,7 +225,6 @@ void OmegaMaxEnt_data::minimize()
 				M_V_out=KM_V*A;
 			}
 			
-			
 			vectors_A.push_back(A);
 			vectors_w.push_back(w);
 
@@ -240,6 +240,7 @@ void OmegaMaxEnt_data::minimize()
 			break;
 		}
 		
+		/*
 		if (ind_alpha_vec>2)
 		{
 			if (ind_curv0==0)
@@ -356,6 +357,7 @@ void OmegaMaxEnt_data::minimize()
 				}
 			}
 		}
+		*/
 		
 		ind_alpha++;
 		ind_alpha_vec++;

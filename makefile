@@ -5,7 +5,7 @@ OBJECTS      = $(SOURCES:.cpp=.o)
 
 EXENAME= /home/maxime/bin/maxEnt
 
-OPT = -std=c++11 -O0 -DARMA_DONT_USE_WRAPPER
+OPT = -std=c++11 -O0 -DARMA_DONT_USE_WRAPPER 
 
 INCLUDE_PATH = -Isrc/armadillo-5.600.2/include
 #-I/usr/include
@@ -21,7 +21,7 @@ COMP_FLAGS   = $(INCLUDE_PATH) $(OPT)
 
 # linker
 LINK         = g++-4.9
-LINK_FLAGS   = $(LIB_PATH)
+LINK_FLAGS   = $(LIB_PATH) 
 
 all: $(EXENAME)
 

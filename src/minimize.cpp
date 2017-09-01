@@ -245,7 +245,7 @@ void OmegaMaxEnt_data::minimize()
 			vec lalpha=log10(alpha_vec);
 			vec lchi2=log10(chi2_vec);
 
-			if(ind_alpha_vec%5==0) 
+			if(ind_alpha_vec%1==0) 
 				gpc_plot_image(handle_gnuplot, vectors_A, w, lalpha, lchi2, log10(alpha_min), ind_alpha-1, bosonOffset);
 		   
 			pow_alpha=pow_alpha-pow_alpha_step;

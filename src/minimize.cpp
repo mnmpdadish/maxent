@@ -116,6 +116,16 @@ void OmegaMaxEnt_data::minimize()
 		iter_dA=1;
 		while ( (tmp_mean_int_dA>tol_int_dA || A1min<0) && iter_dA<Niter_dA_max && (tmp_mean_int_dA<tmp_mean_int_dA_prec))
 		{
+			// notes: when we are fitting the noise, it is mainly the condition A1min<0 that maintain the loop going.
+			//        Before, it is the (tmp_mean_int_dA>tol_int_dA) condition. tol_int_dA does not need to be that small.
+			//        Indeed, even for a fairly large tol_int_dA~0.05, the resulting A spectrum calculated is almost the same
+			//        but we save a factor of 3 in time.
+			
+			//printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, tol_int_dA);
+			//printf((tmp_mean_int_dA>tol_int_dA || A1min<0) ? "true " : "false ");
+			//printf((iter_dA<Niter_dA_max) ? "true " : "false ");
+			//printf((tmp_mean_int_dA<tmp_mean_int_dA_prec) ? "true " : "false ");
+			
 			grS=dwS % log(A1/default_model) + dwS;
 			ind_An=find(A1/default_model<rADchange);
 			if (ind_An.n_rows)
@@ -144,7 +154,7 @@ void OmegaMaxEnt_data::minimize()
 			tmp_mean_int_dA_prec=tmp_mean_int_dA;
 			tmp_mean_int_dA=mean_int_dA(0);
 			
-			printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, mean_int_dA_prec);
+			//printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, mean_int_dA_prec);
 			
 			
 			//if (mean_int_dA(0)<mean_int_dA_prec) //no need for this test, do the correction either ways
@@ -161,9 +171,13 @@ void OmegaMaxEnt_data::minimize()
 			}
 			
 			iter_dA++;
+			//printf((tmp_mean_int_dA>tol_int_dA || A1min<0) ? "true " : "false ");
+			//printf((iter_dA<Niter_dA_max) ? "true " : "false ");
+			//printf((tmp_mean_int_dA<tmp_mean_int_dA_prec) ? "true \n" : "false \n");
+			
 		}
+		//printf("\n\n");
 		
-
 		chi2prec=chi2(0);
 		DG=GM-KGM*A1;
 		chi2=DG.t()*DG;

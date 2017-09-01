@@ -184,7 +184,6 @@ void OmegaMaxEnt_data::loop_run()
 		vectors_w.resize(Nalpha_new);
 	}
 	
-	handle_gnuplot = gpc_init_image();
 	minimize();
 
 	vec lalpha=log10(alpha_vec.rows(0,ind_alpha_vec-1));

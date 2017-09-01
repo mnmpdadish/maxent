@@ -20,7 +20,7 @@ int gpc_plot_image (FILE *pipe, vector<vec> vectors_A, vec w, int indexToPlot, i
 {
   int i, j;
   char title[80];
-  fprintf (pipe, "set term %s noraise \n", _TERMINAL); // Set the plot
+  fprintf (pipe, "set term %s size 1200,800 noraise \n", _TERMINAL); // Set the plot
   
   sprintf(title,"A(omega)");
   

@@ -20,8 +20,13 @@ FILE *gpc_init_image ()
   fprintf(pipe,"set xrange[%f:%f]\nset yrange [%f:%f]\n",XMIN,XMAX,YMIN,YMAX);
   fprintf(pipe,"set term %s size 1200,600 noraise \n", _TERMINAL); // Set the plot
   fprintf(pipe,"set tmargin at screen 0.1\nset lmargin at screen 0.1\nset rmargin at screen 0.95\nset bmargin at screen 0.95\n");
-  fprintf(pipe,"set object 1 rect from %f,%f to %f,%f lw 1 fs empty border lc rgb '#000000'", XMIN,YMIN+0.7*(YMAX-YMIN),XMIN+0.3*(XMAX-XMIN),YMAX);
-  fprintf(pipe, "plot '-' u 1:2 w l \n-1.0 0.0\n-1.0 1.0\ne\n\n"); // Set plot format
+  
+  fprintf(pipe,"set object 1 rect from %f,%f to %f,%f lw 1 fs empty border lc rgb '#000000'", XMIN+0.7*(XMAX-XMIN),YMIN+0.7*(YMAX-YMIN),XMAX,YMAX);
+  fprintf(pipe,"plot '-' u 1:2 w l \n-1.0 0.0\n1.0 1.0\ne\n\n"); // Set plot format
+  fprintf(pipe,"set label 1 'log {/Symbol c}^2' at %f,%f rotate by 90\n", XMIN+0.68*(XMAX-XMIN), YMIN+0.82*(YMAX-YMIN));
+  fprintf(pipe,"set label 2 'log {/Symbol a}' at %f,%f \n",               XMIN+0.83*(XMAX-XMIN), YMIN+0.68*(YMAX-YMIN));
+  fprintf(pipe,"set xlabel '{/Symbol w}' \n");
+  fprintf(pipe,"set ylabel 'A({/Symbol w})' \n");
   fflush(pipe);                                    // flush the pipe
   return (pipe);
 }
@@ -35,7 +40,7 @@ int gpc_plot_image (FILE *pipe, vector<vec> vectors_A, vec w, vec alpha_vec, vec
   int sz2= alpha_vec.size();
   
   //fprintf(pipe,"set multiplot\nunset logscale\n");
-  fprintf (pipe, "plot '-' u 1:2 w lp t '', '-' u 3:4 w lp t ''\n");//, '-' u 1:3 w l, '-' u 1:4 w l, '-' u 1:5 w l\n"); // Set plot format
+  fprintf (pipe, "plot '-' u 1:2 w lp t '', '-' u 3:4 w p t ''\n");//, '-' u 1:3 w l, '-' u 1:4 w l, '-' u 1:5 w l\n"); // Set plot format
   printf("alpha: %d   %d %d\n", indexToPlot, sz1, sz2);
   
   double x1,y1;
@@ -46,11 +51,17 @@ int gpc_plot_image (FILE *pipe, vector<vec> vectors_A, vec w, vec alpha_vec, vec
       y1=vectors_A[indexToPlot][ii];
     }
     else{
-      x1=10000.0;
+      x1=10000.0; // dummy false points
       y1=0.0;
     }
-    x2=alpha_vec[ii]/alpha_vec[0]*0.3*(XMAX-XMIN)+XMIN;
-    y2=chi2_vec[ii]/chi2_vec[0]*0.3*(YMAX-YMIN)+YMIN+0.65*(YMAX-YMIN);
+    if(ii < sz2){
+      x2=alpha_vec[ii]/alpha_vec[0]*0.3*(XMAX-XMIN)+XMIN+0.7*(XMAX-XMIN);       // complicated tricks to plot the curve on the same plot, but in the corner.
+      y2=chi2_vec[ii]/chi2_vec[0]*0.3*(YMAX-YMIN)+YMIN+0.65*(YMAX-YMIN);
+    }
+    else{
+      x2=1000; // dummy false points
+      y2=1000;
+    }
     fprintf(pipe,"%1.3f %1.3f %1.3f %1.3f\n", x1,y1,x2,y2);
   }
   

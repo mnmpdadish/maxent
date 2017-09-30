@@ -7,10 +7,11 @@ EXENAME= /home/maxime/bin/maxEnt
 
 OPT = -std=c++11 -O0 -DARMA_DONT_USE_WRAPPER
 
-INCLUDE_PATH = -Isrc/armadillo-5.600.2/include
+INCLUDE_PATH = #-I/home/maxime/install/armadillo-5.600.2/include
 #-I/usr/include
 
-LIBS         = -llapack -lblas 
+MKL          = /opt/intel/mkl/lib/intel64
+LIBS         = -larmadillo ${MKL}/libmkl_intel_lp64.a -Wl,--start-group $(MKL)/libmkl_blas95_lp64.a $(MKL)/libmkl_lapack95_lp64.a $(MKL)/libmkl_sequential.a ${MKL}/libmkl_core.a -Wl,--end-group  -lgomp -lpthread -lm -ldl 
 #-larmadillo
 
 LIB_PATH     = -L/usr/lib

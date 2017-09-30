@@ -147,8 +147,8 @@ void OmegaMaxEnt_data::loop_run()
 		
 		alpha_vec.zeros(Nalpha_max);
 		chi2_vec.zeros(Nalpha_max);
-		S_vec.zeros(Nalpha_max);
-		Aw_samp.zeros(Nalpha_max,Nwsamp);
+		//S_vec.zeros(Nalpha_max);
+		//Aw_samp.zeros(Nalpha_max,Nwsamp);
 		ind_alpha_vec=0;
 		
 		lchi2_lalpha_lgth=0;
@@ -177,53 +177,20 @@ void OmegaMaxEnt_data::loop_run()
 	{
 		alpha_vec.resize(Nalpha_new);
 		chi2_vec.resize(Nalpha_new);
-		S_vec.resize(Nalpha_new);
-		Aw_samp.resize(Nalpha_new,Nwsamp);
 		curv_lchi2_lalpha_1.resize(Nalpha_new);
 		dlchi2_lalpha_1.resize(Nalpha_new);
 		//MC!
 		vectors_A.resize(Nalpha_new);
 		vectors_w.resize(Nalpha_new);
 	}
+	
 	minimize();
-//				pow_alpha_step=pow_alpha_step_min;
-//				minimize_increase_alpha();
-	
-	char alpha_output[100], alpha_output_format[]="alpha: % 1.4e,  Q: % 1.4e,  S: % 1.4e,  chi2: % 1.4e\n";
-	//cout << "salut3 " << alpha_vec.n_rows << " " << S_vec.n_rows << " " << chi2_vec.n_rows << " " << ind_alpha_vec << " " <<Nalpha_new << " " <<Nalpha <<" " <<Nalpha_max;
-	double Q=chi2_vec(ind_alpha_vec-1)-alpha_vec(ind_alpha_vec-1)*S_vec(ind_alpha_vec-1);
-	sprintf(alpha_output,alpha_output_format,alpha_vec(ind_alpha_vec-1),Q,S_vec(ind_alpha_vec-1),chi2_vec(ind_alpha_vec-1));
-	cout<<"last output values:\n";
-	cout<<alpha_output;
-	
+
 	vec lalpha=log10(alpha_vec.rows(0,ind_alpha_vec-1));
 	vec lchi2=log10(chi2_vec.rows(0,ind_alpha_vec-1));
 	
-	char file_name[200];
-	sprintf(file_name, chi2_vs_alpha_format.c_str(),tem);
-	mat save_mat=join_rows(alpha_vec.rows(0,ind_alpha_vec-1),chi2_vec.rows(0,ind_alpha_vec-1));
-	string name(output_dir);
-	name.append(file_name);
-	//save_mat.save(name.c_str(), raw_ascii);
-	name.assign(output_dir_fin);
-	name.append(file_name);
-	//save_mat.save(name.c_str(), raw_ascii);
-
-	sprintf(file_name, Asamp_vs_alpha_format.c_str(),tem);
-	save_mat=join_rows(alpha_vec.rows(0,ind_alpha_vec-1),Aw_samp.rows(0,ind_alpha_vec-1));
-	name.assign(output_dir);
-	name.append(file_name);
-	//save_mat.save(name.c_str(), raw_ascii);
-	name.assign(output_dir_fin);
-	name.append(file_name);
-	//save_mat.save(name.c_str(), raw_ascii);
-
-	vec DM=default_model/exp(1);
-	
 	if (ind_alpha_vec>3)
 	{
-		//cout<<"ind_alpha_vec: "<<ind_alpha_vec<<endl;
-		
 		double fs=f_scale_lalpha_lchi2;
 		double smooth_length=chi2_alpha_smooth_range;
 		int ind_curv_start, ind_curv_end;
@@ -336,7 +303,7 @@ void OmegaMaxEnt_data::loop_run()
 		int ind_alpha_opt, ind_alpha_opt_l, ind_alpha_opt_r;
 		
 		double max_curv;
-		if (ind_min_curv<Ncurv && ind_max_curv<Ncurv)
+		if (ind_min_curv<Ncurv && ind_max_curv<Ncurv) // find ind_alpha_opt
 		{
 			uword ind_alpha_opt_tmp;
 			vec curv=curv_lchi2_lalpha.rows(ind_min_curv,ind_max_curv);
@@ -490,9 +457,8 @@ void OmegaMaxEnt_data::loop_run()
 			cout<<"new value of alpha_min: "<<alpha_min<<endl;
 		}
 	}
-	
+
 	return;
-	
 }
 
 

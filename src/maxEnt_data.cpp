@@ -90,6 +90,8 @@ OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 	R_width_ASmin=0.05;
 	f_Smin=1.0;
 	diff_chi2_max=0.1;
+	//tol_int_dA=1.0e-12;    // this is too intense for nothing
+	//tol_int_dA=5e-2;
 	tol_int_dA=1.0e-12;
 	rc2H=1.0e12;
 	fc2=1.0e20;
@@ -109,7 +111,8 @@ OmegaMaxEnt_data::OmegaMaxEnt_data(int arg_N, char *args[])
 	R_Dw_dw=20;
 	R_SW_wr=1;
 	R_wmax_wr_min=3;
-
+	
+	handle_gnuplot = gpc_init_image();
 }
 
 OmegaMaxEnt_data::~OmegaMaxEnt_data()

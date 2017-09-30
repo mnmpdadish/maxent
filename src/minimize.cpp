@@ -49,7 +49,6 @@ void OmegaMaxEnt_data::minimize()
 	double xc, yc, x1, y1;
 	
 	c1=(log(rADchange)+1)*dwS;
-	//vec c2_0=-fc2*c1/(2*exp(-1)*default_model);
 	vec c2_alpha=2*PI*alpha_c2_max*ones<vec>(NwA);
 	
 	uword ind_max_dchi2_alpha;
@@ -67,6 +66,8 @@ void OmegaMaxEnt_data::minimize()
 		//if (ind_c2_sat.n_rows)
 		//	c2.rows(ind_c2_sat)=(2*PI*alpha_c2_max/alpha)*ones<vec>(ind_c2_sat.n_rows);
 		
+		
+		/*
 		grS=dwS % log(A1/default_model) + dwS;
 		ind_An=find(A1/default_model<rADchange);
 		if (ind_An.n_rows)
@@ -107,9 +108,24 @@ void OmegaMaxEnt_data::minimize()
 		}
 		
 		A1min=min(A1-Amin);
+		*/
 		
-		while ( (mean_int_dA(0)>tol_int_dA || A1min<0) && iter_dA<Niter_dA_max && (mean_int_dA(0)<mean_int_dA_prec || mean_int_dA(0)<mean_int_dA_prec2))
+		double tmp_mean_int_dA=1e9; //arbitrairy large number (to ensure one while iteration at least)
+		double tmp_mean_int_dA_prec=1e10; //arbitrairy large number (to ensure one while iteration at least)
+		
+		iter_dA=1;
+		while ( (tmp_mean_int_dA>tol_int_dA || A1min<0) && iter_dA<Niter_dA_max && (tmp_mean_int_dA<tmp_mean_int_dA_prec))
 		{
+			// notes: when we are fitting the noise, it is mainly the condition A1min<0 that maintain the loop going.
+			//        Before, it is the (tmp_mean_int_dA>tol_int_dA) condition. tol_int_dA does not need to be that small.
+			//        Indeed, even for a fairly large tol_int_dA~0.05, the resulting A spectrum calculated is almost the same
+			//        but we save a factor of 3 in time.
+			
+			//printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, tol_int_dA);
+			//printf((tmp_mean_int_dA>tol_int_dA || A1min<0) ? "true " : "false ");
+			//printf((iter_dA<Niter_dA_max) ? "true " : "false ");
+			//printf((tmp_mean_int_dA<tmp_mean_int_dA_prec) ? "true " : "false ");
+			
 			grS=dwS % log(A1/default_model) + dwS;
 			ind_An=find(A1/default_model<rADchange);
 			if (ind_An.n_rows)
@@ -134,32 +150,34 @@ void OmegaMaxEnt_data::minimize()
 			VPdA=B2/D1;
 			dA1=P*(V*VPdA);
 			
-			mean_int_dA_prec2=mean_int_dA_prec;
-			mean_int_dA_prec=mean_int_dA(0);
-			mean_int_dA=abs(dA1.t())*dwS;
+			mean_int_dA=abs(dA1.t())*dwS;  // MC: this is the integral of the difference dA1
+			tmp_mean_int_dA_prec=tmp_mean_int_dA;
+			tmp_mean_int_dA=mean_int_dA(0);
 			
-			if (mean_int_dA(0)<mean_int_dA_prec)
-			{
-				A1=A1+dA1;
-				A1min=min(A1-Amin);
-			}
+			//printf("% 4.8f  % 4.8f \n", tmp_mean_int_dA, mean_int_dA_prec);
+			
+			
+			//if (mean_int_dA(0)<mean_int_dA_prec) //no need for this test, do the correction either ways
+			//{
+		   A1=A1+dA1;
+			A1min=min(A1-Amin);
+			//dA1.t().print();
+			//}
 			
 			ind_Anul=find(A1==0);
 			if (ind_Anul.n_rows)
 			{
 				A1.rows(ind_Anul)=Amin.rows(ind_Anul);
-			//	A1.rows(ind_Anul)=arma::max(Amin.rows(ind_Anul),DBL_MIN);
 			}
 			
 			iter_dA++;
+			//printf((tmp_mean_int_dA>tol_int_dA || A1min<0) ? "true " : "false ");
+			//printf((iter_dA<Niter_dA_max) ? "true " : "false ");
+			//printf((tmp_mean_int_dA<tmp_mean_int_dA_prec) ? "true \n" : "false \n");
+			
 		}
-
-/*
-		if (mean_int_dA(0)>mean_int_dA_prec || iter_dA==Niter_dA_max)
-		{
-			cout<<"alpha= "<<alpha<<"  iteration: "<<iter_dA<<"  integrated absolute variation in A: "<<mean_int_dA_prec<<endl;
-		}
-*/		
+		//printf("\n\n");
+		
 		chi2prec=chi2(0);
 		DG=GM-KGM*A1;
 		chi2=DG.t()*DG;
@@ -179,28 +197,21 @@ void OmegaMaxEnt_data::minimize()
 			A=A1;
 			alpha_vec(ind_alpha_vec)=alpha;
 			chi2_vec(ind_alpha_vec)=chi2(0);
-			S_vec(ind_alpha_vec)=S;
 			vec logA=log(A/default_model);
 			ind_An=find(A/default_model<rADchange);
 			if (ind_An.n_rows)
 			{
 				logA.rows(ind_An)=log(rADmin)*ones<vec>(ind_An.n_rows);
 			}
-			S_vec(ind_alpha_vec)=-sum(A % dwS % logA)/(2*PI);
-			Aw_samp.row(ind_alpha_vec)=trans(A(w_sample_ind));
-			
-			if (print_alpha)
-			{
-				Q=chi2(0)-alpha*S_vec(ind_alpha_vec);
-				sprintf(alpha_output,alpha_output_format,ind_alpha,alpha,Q,S_vec(ind_alpha_vec),chi2(0));
-				cout<<alpha_output;
-			}
+			//Aw_samp.row(ind_alpha_vec)=trans(A(w_sample_ind));
 			
 			G_out=K*A;
 			G_V_out=KG_V*A;
-			
+
+			int bosonOffset = 0;
 			if (!boson || col_Gi>0)
 			{
+         	bosonOffset=1;			
 				if (cov_diag)
 				{
 					uvec even_ind=linspace<uvec>(0,2*Nn-2,Nn);
@@ -210,8 +221,6 @@ void OmegaMaxEnt_data::minimize()
 				else
 				{
 					errRe=G_V-G_V_out;
-					//errRe=G_V.rows(0,Nn-1)-G_V_out.rows(0,Nn-1);
-					//errIm=G_V.rows(Nn,2*Nn-1)-G_V_out.rows(Nn,2*Nn-1);
 				}
 			}
 			else
@@ -230,78 +239,15 @@ void OmegaMaxEnt_data::minimize()
 				M_V_out=KM_V*A;
 			}
 			
-			
 			vectors_A.push_back(A);
 			vectors_w.push_back(w);
 			
-			/*
-			if (save_spec_func)
-			{
-				
-				
-				M_save.zeros(Nw,2);
-				M_save.col(0)=w;
-				if (!boson || col_Gi>0)
-					M_save.submat(1,1,Nw-2,1)=A;
-				else
-					M_save.submat(0,1,Nw-2,1)=A;
-				sprintf(file_name,output_name_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				
-				if (!boson || col_Gi>0)
-				{
-					M_save.zeros(Nn,3);
-					uvec even_ind=linspace<uvec>(0,2*Nn-2,Nn);
-					M_save.col(0)=wn;
-					M_save.col(1)=G_out.rows(even_ind);
-					M_save.col(2)=G_out.rows(even_ind+1);
-				}
-				else
-				{
-					M_save.zeros(Nn,2);
-					M_save.col(0)=wn;
-					M_save.col(1)=G_out;
-				}
-				sprintf(file_name,output_G_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				if (!boson || col_Gi>0)
-				{
-					if (cov_diag)
-					{
-						M_save.zeros(Nn,3);
-						M_save.col(0)=wn;
-						M_save.col(1)=errRe;
-						M_save.col(2)=errIm;
-					}
-					else
-					{
-						M_save.zeros(2*Nn,2);
-						M_save.col(0)=eigv_ind;
-						M_save.col(1)=errRe;
-					}
-				}
-				else
-				{
-					M_save.zeros(Nn,2);
-					M_save.col(0)=eigv_ind;
-					M_save.col(1)=errRe;
-				}
-				sprintf(file_name,output_error_format.c_str(),tem,alpha);
-				//M_save.save(file_name,raw_ascii);
-				
-				if (NM>0)
-				{
-					sprintf(file_name,output_moments_format.c_str(),tem,alpha);
-					M_save.zeros(NM,2);
-					M_save.col(0)=M;
-					M_save.col(1)=M_out;
-					//M_save.save(file_name,raw_ascii);
-				}
-				
-			}*/
-			
+			vec lalpha=log10(alpha_vec);
+			vec lchi2=log10(chi2_vec);
+
+			if(ind_alpha_vec%1==0) 
+				gpc_plot_image(handle_gnuplot, vectors_A, w, lalpha, lchi2, log10(alpha_min), ind_alpha-1, bosonOffset);
+		   
 			pow_alpha=pow_alpha-pow_alpha_step;
 			alpha_prec=alpha;
 			alpha=pow(10,pow_alpha);
@@ -312,6 +258,7 @@ void OmegaMaxEnt_data::minimize()
 			break;
 		}
 		
+		/*
 		if (ind_alpha_vec>2)
 		{
 			if (ind_curv0==0)
@@ -428,6 +375,7 @@ void OmegaMaxEnt_data::minimize()
 				}
 			}
 		}
+		*/
 		
 		ind_alpha++;
 		ind_alpha_vec++;

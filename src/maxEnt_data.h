@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 
@@ -19,6 +17,9 @@
 #include "utilities.h"
 #include <cstring>
 #include <cmath>
+
+#include "gnuplot_pipe.h"
+
 
 using namespace arma;
 
@@ -273,6 +274,8 @@ extern "C++"
 		//variables defined by Maxime Charlebois:
 		vector<vec> vectors_A;  // A
       vector<vec> vectors_w;  // w
+      
+      FILE * handle_gnuplot;  //handle to talk to gnuplot
 
     };
     

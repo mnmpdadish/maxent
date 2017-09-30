@@ -11,6 +11,7 @@ FILE *gpc_init_image ()
   FILE *pipe;
 	
   pipe = popen ("gnuplot > /dev/null 2>&1", "w");                  // Open pipe to Gnuplot and check for error
+  fflush(pipe);                                   // flush the pipe
   if (pipe == NULL)
   {
     printf ("\nCan not find the required Gnuplot executable.");
@@ -21,8 +22,8 @@ FILE *gpc_init_image ()
   fprintf(pipe,"set term %s size 1200,600 noraise \n", _TERMINAL); // Set the plot
   fprintf(pipe,"set tmargin at screen 0.1\nset lmargin at screen 0.1\nset rmargin at screen 0.95\nset bmargin at screen 0.95\n");
   
-  fprintf(pipe,"set object 1 rect from %f,%f to %f,%f lw 1 fs empty border lc rgb '#000000'", XMIN+0.7*(XMAX-XMIN),YMIN+0.6*(YMAX-YMIN),XMAX,YMAX);
-  fprintf(pipe,"plot '-' u 1:2 w l \n-1.0 0.0\n1.0 1.0\ne\n\n"); // Set plot format
+  fprintf(pipe,"set object 1 rect from %f,%f to %f,%f lw 1 fs empty border lc rgb '#000000' \n", XMIN+0.7*(XMAX-XMIN),YMIN+0.6*(YMAX-YMIN),XMAX,YMAX);
+  fprintf(pipe,"plot 0 w l t ''\n"); // Set plot format
   fprintf(pipe,"set label 1 'log {/Symbol c}^2' at %f,%f rotate by 90\n", XMIN+0.68*(XMAX-XMIN), YMIN+0.82*(YMAX-YMIN));
   fprintf(pipe,"set label 2 'log {/Symbol a}' at %f,%f \n",               XMIN+0.83*(XMAX-XMIN), YMIN+0.58*(YMAX-YMIN));
   fprintf(pipe,"set xlabel '{/Symbol w}' \n");

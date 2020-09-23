@@ -1,0 +1,21 @@
+
+
+#compile:
+
+check makefile first (armadillo include header directory ad linking)
+have armadillo installed
+have lapack and blas (or mkl) installed
+type:
+
+$ make
+
+
+# run
+
+$ cd testMaxEnt
+$ ../maxEnt fictiveGreenI.dat
+
+check A.dat
+
+kind of basic for now.
+

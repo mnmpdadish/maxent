@@ -1,21 +1,35 @@
+# BASIC README
+
+OmegaMaxEnt is a tool for the analytic continuation of Matsubara data.
+This is a modification of the original code OmegaMaxEnt by available 
+at https://github.com/dbergeron1/OmegaMaxEnt
 
 
-#compile:
+# License:
+
+It is published under the [GNU Public License, version 3][license]
+[license]: http://www.gnu.org/licenses/gpl.html
+
+
+# To compile:
 
 check makefile first (armadillo include header directory ad linking)
 have armadillo installed
 have lapack and blas (or mkl) installed
-type:
+have gnuplot installed (available from command line).
 
+Then type:
+
+```shell
 $ make
+```
 
+# To run:
 
-# run
-
+```shell
 $ cd testMaxEnt
 $ ../maxEnt fictiveGreenI.dat
+```
 
-check A.dat
-
-kind of basic for now.
+then check A.dat with gnuplot. Kind of basic for now.
 

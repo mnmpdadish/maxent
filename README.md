@@ -9,6 +9,8 @@ at https://github.com/dbergeron1/OmegaMaxEnt
 
 It is published under the [GNU Public License, version 3][license]
 [license]: http://www.gnu.org/licenses/gpl.html
+Note that the new part of the code here comes from another code
+published under MIT license.
 
 
 # To compile:
@@ -31,5 +33,5 @@ $ cd testMaxEnt
 $ ../maxEnt fictiveGreenI.dat
 ```
 
-then check A.dat with gnuplot. Kind of basic for now.
+then check A.dat with gnuplot. Kind of basic for now. For now, there is no parameter file, and it is read directly into maxEnt_data.cpp. 
 
